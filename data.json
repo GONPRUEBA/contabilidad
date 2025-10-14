@@ -1,16 +1,23 @@
 [
     {
-        "id": "44b47caf-2b27-4a11-a287-1238660f7b76",
-        "fecha": "2025-02-12",
-        "asunto": "opa",
+        "id": "b68dea43-1390-4b43-b909-6b6dea069124",
+        "fecha": "2025-10-14",
+        "asunto": "COMIDA",
         "tipo": "BANCO",
-        "cantidad": -100.0
+        "cantidad": -150.0
     },
     {
-        "id": "23c2b24b-b813-4e73-acb0-a3d9abede5af",
-        "fecha": "2025-02-12",
-        "asunto": "opa",
+        "id": "0a48c35c-0ee0-4021-a911-a9bfc19a0ccc",
+        "fecha": "2025-10-14",
+        "asunto": "PAGA",
+        "tipo": "CASH",
+        "cantidad": 30.0
+    },
+    {
+        "id": "72f660bc-b3d9-4fe1-a5bd-509292d2777d",
+        "fecha": "2025-10-15",
+        "asunto": "O",
         "tipo": "BANCO",
-        "cantidad": 150.0
+        "cantidad": 1.0
     }
 ]
