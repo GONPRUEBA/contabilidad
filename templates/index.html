@@ -7,21 +7,20 @@
     <style>
         /* --- Estilos Base --- */
         body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f9; }
-        /* Usamos box-sizing: border-box global para que padding y border no afecten el width */
         *, *::before, *::after {
             box-sizing: border-box; 
         }
         .container { max-width: 1200px; margin: 10px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
         h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
         
-        /* --- Salarios (Flexbox Corregido) --- */
+        /* --- Salarios (Flexbox) --- */
         .salarios { 
             display: flex; 
             justify-content: space-between;
             flex-wrap: wrap;
             margin-bottom: 30px; 
             background: #e9ecef; 
-            padding: 10px; /* Reducido para mejor ajuste */
+            padding: 10px; 
             border-radius: 6px; 
         }
         .salarios div { 
@@ -32,12 +31,12 @@
             font-size: 1em; 
             background: white; 
             flex-grow: 1; 
-            min-width: 250px; /* Tamaño mínimo aceptable en desktop */
-            margin: 5px; /* Espacio uniforme */
+            min-width: 250px; 
+            margin: 5px; 
         }
         .salarios span { font-size: 1.3em; font-weight: bold; display: block; margin-top: 5px; color: #333; }
 
-        /* --- Formulario (Flexbox Corregido) --- */
+        /* --- Formulario (Flexbox) --- */
         .formulario { 
             margin-bottom: 25px; 
             padding: 15px; 
@@ -46,14 +45,13 @@
             display: flex; 
             align-items: center; 
             flex-wrap: wrap; 
-            gap: 10px; /* Usa gap para el espacio entre elementos, es más limpio */
+            gap: 10px;
         }
         .formulario input, .formulario select { 
             padding: 10px; 
             border: 1px solid #999; 
             border-radius: 4px; 
-            /* Se establece un ancho base y flex-grow para que compartan el espacio */
-            flex: 1 1 120px; /* flex-grow: 1, flex-shrink: 1, flex-basis: 120px */
+            flex: 1 1 120px; 
             min-width: 100px;
         }
         .formulario button { 
@@ -65,7 +63,7 @@
             cursor: pointer; 
             font-weight: bold; 
             white-space: nowrap; 
-            flex-shrink: 0; /* Asegura que el botón no se encoja */
+            flex-shrink: 0; 
         }
         .formulario button:hover { background-color: #218838; }
 
@@ -87,32 +85,33 @@
         th { background-color: #007bff; color: white; }
         tr:nth-child(even) { background-color: #f2f2f2; }
         
+        /* Estilo para el botón de eliminar */
+        .btn-eliminar {
+            background-color: #dc3545; /* Rojo */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-eliminar:hover {
+            background-color: #c82333;
+        }
+
         /* --- MEDIA QUERIES (ADAPTACIÓN A MÓVILES) --- */
         @media (max-width: 768px) {
             .container { padding: 15px; margin: 0; }
             h1 { font-size: 1.5em; text-align: center; }
 
-            /* Salarios: Apilar y usar todo el ancho */
-            .salarios { 
-                flex-direction: column; 
-                padding: 10px;
-            }
-            .salarios div { 
-                min-width: 100%; 
-                margin: 5px 0;
-            }
+            .salarios { flex-direction: column; padding: 10px; }
+            .salarios div { min-width: 100%; margin: 5px 0; }
 
-            /* Formulario: Apilar todos los inputs/selects/button verticalmente */
-            .formulario {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 15px;
-            }
+            .formulario { flex-direction: column; align-items: stretch; padding: 15px; }
             .formulario input, .formulario select, .formulario button {
-                /* Usamos flex: 1 1 auto y width: 100% para ocupar todo el ancho */
                 flex: 1 1 auto;
                 width: 100%; 
-                margin: 0; /* El gap de la flexbox manejará el espacio */
+                margin: 0; 
             }
         }
     </style>
@@ -158,15 +157,21 @@
                     <th>ASUNTO</th>
                     <th>TIPO</th>
                     <th>CANTIDAD</th>
+                    <th>ACCIONES</th> 
                 </tr>
             </thead>
             <tbody id="tablaMovimientos">
                 {% for mov in movimientos %}
-                <tr>
+                <tr id="movimiento-{{ mov.id }}"> 
                     <td>{{ mov.fecha }}</td>
                     <td>{{ mov.asunto }}</td>
                     <td>{{ mov.tipo }}</td>
                     <td>{{ mov.cantidad }} €</td>
+                    <td>
+                        <button class="btn-eliminar" onclick="eliminarMovimiento('{{ mov.id }}')">
+                            Eliminar
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -176,21 +181,34 @@
 
 <script>
     // ---------------------------------------------
-    // Funciones JavaScript (Sin cambios)
+    // Funciones JavaScript
     // ---------------------------------------------
     
     function actualizarTablaYDom(datos) {
+        // 1. Actualizar la tabla
         const tablaBody = document.getElementById('tablaMovimientos');
         tablaBody.innerHTML = ''; 
 
         datos.movimientos.forEach(mov => {
             const fila = tablaBody.insertRow();
+            // Asignar ID para uso futuro si es necesario
+            fila.id = `movimiento-${mov.id}`; 
+            
             fila.insertCell().textContent = mov.fecha;
             fila.insertCell().textContent = mov.asunto;
             fila.insertCell().textContent = mov.tipo;
             fila.insertCell().textContent = parseFloat(mov.cantidad).toFixed(2) + ' €'; 
+            
+            // Botón Eliminar
+            const cellAcciones = fila.insertCell();
+            cellAcciones.innerHTML = `
+                <button class="btn-eliminar" onclick="eliminarMovimiento('${mov.id}')">
+                    Eliminar
+                </button>
+            `;
         });
 
+        // 2. Actualizar saldos
         document.getElementById('saldoBanco').textContent = datos.saldos.banco.toFixed(2);
         document.getElementById('saldoCash').textContent = datos.saldos.cash.toFixed(2);
         document.getElementById('saldoTotal').textContent = datos.saldos.total.toFixed(2);
@@ -238,6 +256,31 @@
         } catch (error) {
             console.error('Error de red:', error);
             alert("No se pudo conectar con el servidor. Asegúrate de que el backend esté en ejecución.");
+        }
+    }
+
+    // NUEVA FUNCIÓN: ELIMINAR MOVIMIENTO
+    async function eliminarMovimiento(movimiento_id) {
+        if (!confirm(`¿Estás seguro de que quieres eliminar este movimiento?`)) {
+            return;
+        }
+
+        try {
+            // Envía la solicitud DELETE al endpoint /eliminar/{id}
+            const respuesta = await fetch(`/eliminar/${movimiento_id}`, {
+                method: 'DELETE',
+            });
+
+            if (respuesta.ok) {
+                const datos = await respuesta.json();
+                actualizarTablaYDom(datos); // El servidor devuelve la lista de movimientos actualizada
+            } else {
+                const errorData = await respuesta.json();
+                alert("Error al eliminar el movimiento: " + errorData.detail);
+            }
+        } catch (error) {
+            console.error('Error de red al eliminar:', error);
+            alert("No se pudo conectar con el servidor para eliminar el movimiento.");
         }
     }
 </script>

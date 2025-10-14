@@ -1,9 +1,16 @@
 [
     {
-        "id": "4469ec91-cac1-46f0-a644-f0d23387ae36",
+        "id": "44b47caf-2b27-4a11-a287-1238660f7b76",
         "fecha": "2025-02-12",
         "asunto": "opa",
         "tipo": "BANCO",
-        "cantidad": 100.0
+        "cantidad": -100.0
+    },
+    {
+        "id": "23c2b24b-b813-4e73-acb0-a3d9abede5af",
+        "fecha": "2025-02-12",
+        "asunto": "opa",
+        "tipo": "BANCO",
+        "cantidad": 150.0
     }
 ]
