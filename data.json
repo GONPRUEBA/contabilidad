@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "id": "4469ec91-cac1-46f0-a644-f0d23387ae36",
+        "fecha": "2025-02-12",
+        "asunto": "opa",
+        "tipo": "BANCO",
+        "cantidad": 100.0
+    }
+]
