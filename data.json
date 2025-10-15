@@ -4,14 +4,14 @@
         "fecha": "2025-10-14",
         "asunto": "COMIDA",
         "tipo": "BANCO",
-        "cantidad": -150.0
+        "cantidad": 200.0
     },
     {
         "id": "0a48c35c-0ee0-4021-a911-a9bfc19a0ccc",
         "fecha": "2025-10-14",
         "asunto": "PAGA",
         "tipo": "CASH",
-        "cantidad": 3000.0
+        "cantidad": 1000.0
     },
     {
         "id": "61165aab-12b0-413e-8fa0-134cbb80494e",
@@ -25,6 +25,13 @@
         "fecha": "2025-10-15",
         "asunto": "OPA",
         "tipo": "BANCO",
-        "cantidad": -52.0
+        "cantidad": 10.0
+    },
+    {
+        "id": "58c17e78-7e0e-4b19-9696-9f0f78776d32",
+        "fecha": "2025-12-20",
+        "asunto": "PUTAS Y COCAINA",
+        "tipo": "CASH",
+        "cantidad": 50.0
     }
 ]

@@ -273,20 +273,7 @@
             ⬆️ Importar Datos (data.json)
         </button>
     </div>
-
-        <div class="formulario">
-        <input type="date" id="inputFecha" required title="Selecciona la fecha de la transacción">
-        <input type="text" id="inputAsunto" placeholder="Asunto / Concepto" required>
-        <select id="inputTipo" required>
-            <option value="" disabled selected>Tipo</option>
-            <option value="BANCO">BANCO</option>
-            <option value="CASH">CASH</option>
-        </select>
-        <input type="number" id="inputCantidad" placeholder="Cantidad (+Ingreso, -Gasto)" step="0.01" required>
-        <button onclick="guardarMovimiento()">OK / GUARDAR</button>
-    </div>
-
-        <div class="salarios">
+    <div class="salarios">
         <div>
             <strong>SALDO BANCO:</strong>
             <span id="saldoBanco">{{ saldos.banco | default('0.00') }}</span> €
@@ -300,6 +287,19 @@
             <span id="saldoTotal">{{ saldos.total | default('0.00') }}</span> €
         </div>
     </div>
+    <div class="formulario">
+        <input type="date" id="inputFecha" required title="Selecciona la fecha de la transacción">
+        <input type="text" id="inputAsunto" placeholder="Asunto / Concepto" required>
+        <select id="inputTipo" required>
+            <option value="" disabled selected>Tipo</option>
+            <option value="BANCO">BANCO</option>
+            <option value="CASH">CASH</option>
+        </select>
+        <input type="number" id="inputCantidad" placeholder="Cantidad (+Ingreso, -Gasto)" step="0.01" required>
+        <button onclick="guardarMovimiento()">OK / GUARDAR</button>
+    </div>
+
+
 
     <!-- NUEVA SECCIÓN: FILTROS -->
     <div class="filtros">
