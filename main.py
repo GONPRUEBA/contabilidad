@@ -1,12 +1,13 @@
 import json
 from datetime import datetime
 from typing import List, Dict, Any
-import uuid # Necesario para generar IDs únicos
+import uuid 
 
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Depends
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+import shutil # Necesario para guardar el archivo subido
 
 # ---------------------------------------------
 # Configuración y Archivos
@@ -91,7 +92,8 @@ async def guardar_movimiento(movimiento: Movimiento):
     movimientos = load_data()
     
     # Asignar un ID único (necesario para la eliminación)
-    nuevo_movimiento = movimiento.dict()
+    # Se usa .model_dump() en lugar de .dict() para versiones recientes de Pydantic
+    nuevo_movimiento = movimiento.model_dump()
     nuevo_movimiento['id'] = str(uuid.uuid4())
     
     movimientos.append(nuevo_movimiento)
@@ -129,5 +131,50 @@ async def eliminar_movimiento(movimiento_id: str):
         'saldos': saldos
     }
 
-# Para iniciar el servidor (ejecutar desde la carpeta principal):
-# uvicorn main:app --reload
+
+# --- NUEVAS RUTAS DE IMPORTACIÓN/EXPORTACIÓN ---
+
+@app.get("/exportar")
+async def exportar_datos():
+    """Ruta GET: Descarga el archivo de datos (data.json)."""
+    try:
+        # Asegúrate de que el archivo existe (o se crea vacío)
+        load_data() 
+        return FileResponse(
+            path=DATA_FILE, 
+            filename="data_contabilidad.json", 
+            media_type='application/json'
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al exportar los datos: {e}")
+
+@app.post("/importar")
+async def importar_datos(file: UploadFile = File(...)):
+    """Ruta POST: Recibe un archivo JSON y sobrescribe el archivo de datos."""
+    
+    # 1. Validar el tipo de archivo (opcional pero recomendado)
+    if not file.filename.lower().endswith('.json'):
+        raise HTTPException(status_code=400, detail="Solo se permiten archivos JSON.")
+        
+    try:
+        # 2. Guardar el archivo subido en la ubicación de DATA_FILE
+        with open(DATA_FILE, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        # 3. Verificar que el JSON es válido
+        # Esto también recarga los datos y recalcula saldos
+        movimientos = load_data()
+        movimientos_ordenados, saldos = sort_and_recalculate(movimientos)
+        
+        # Devuelve los datos actualizados para recargar la tabla en el frontend
+        return {
+            'message': "Datos importados con éxito.",
+            'movimientos': movimientos_ordenados,
+            'saldos': saldos
+        }
+
+    except json.JSONDecodeError:
+        # Si ocurre un error de decodificación, probablemente el archivo no es un JSON válido
+        raise HTTPException(status_code=400, detail="El archivo JSON no es válido o está corrupto.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno al importar: {e}")

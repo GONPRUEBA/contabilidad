@@ -13,6 +13,43 @@
         .container { max-width: 1200px; margin: 10px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
         h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
         
+        /* --- NUEVO ESTILO: Acciones de Datos (Importar/Exportar) --- */
+        .acciones-datos {
+            display: flex;
+            gap: 15px; /* Espacio entre botones */
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            background: #e9e9f9; /* Fondo ligero para la sección */
+        }
+        .acciones-datos button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            flex-grow: 1; 
+            max-width: 250px;
+        }
+        .acciones-datos .btn-exportar {
+            background-color: #ffc107; /* Amarillo para exportar */
+            color: #333;
+        }
+        .acciones-datos .btn-exportar:hover {
+            background-color: #e0a800;
+        }
+        .acciones-datos .btn-importar {
+            background-color: #17a2b8; /* Azul claro para importar */
+            color: white;
+        }
+        .acciones-datos .btn-importar:hover {
+            background-color: #138496;
+        }
+        /* Ocultar input de archivo por defecto */
+        .acciones-datos input[type="file"] {
+            display: none;
+        }
+        
         /* --- Salarios (Flexbox) --- */
         .salarios { 
             display: flex; 
@@ -106,6 +143,10 @@
 
             .salarios { flex-direction: column; padding: 10px; }
             .salarios div { min-width: 100%; margin: 5px 0; }
+            
+            /* Ajuste para los nuevos botones en móvil */
+            .acciones-datos { flex-direction: column; gap: 10px; padding: 15px; }
+            .acciones-datos button { max-width: 100%; }
 
             .formulario { flex-direction: column; align-items: stretch; padding: 15px; }
             .formulario input, .formulario select, .formulario button {
@@ -120,6 +161,16 @@
 
 <div class="container">
     <h1>CONTABILIDAD B 📊</h1>
+    
+    <div class="acciones-datos">
+        <button class="btn-exportar" onclick="exportarDatos()">
+            💾 Exportar Datos (data.json)
+        </button>
+        <input type="file" id="inputArchivo" accept=".json" onchange="manejarImportacion()">
+        <button class="btn-importar" onclick="document.getElementById('inputArchivo').click()">
+            ⬆️ Importar Datos (data.json)
+        </button>
+    </div>
 
     <div class="salarios">
         <div>
@@ -197,6 +248,7 @@
             fila.insertCell().textContent = mov.fecha;
             fila.insertCell().textContent = mov.asunto;
             fila.insertCell().textContent = mov.tipo;
+            // Asegurar el formato con 2 decimales
             fila.insertCell().textContent = parseFloat(mov.cantidad).toFixed(2) + ' €'; 
             
             // Botón Eliminar
@@ -259,7 +311,7 @@
         }
     }
 
-    // NUEVA FUNCIÓN: ELIMINAR MOVIMIENTO
+    // FUNCIÓN: ELIMINAR MOVIMIENTO
     async function eliminarMovimiento(movimiento_id) {
         if (!confirm(`¿Estás seguro de que quieres eliminar este movimiento?`)) {
             return;
@@ -281,6 +333,59 @@
         } catch (error) {
             console.error('Error de red al eliminar:', error);
             alert("No se pudo conectar con el servidor para eliminar el movimiento.");
+        }
+    }
+
+    // --- NUEVAS FUNCIONES DE IMPORTACIÓN/EXPORTACIÓN ---
+
+    function exportarDatos() {
+        // Simplemente redirige para que el navegador descargue el archivo
+        window.location.href = '/exportar';
+    }
+
+    async function manejarImportacion() {
+        const input = document.getElementById('inputArchivo');
+        const archivo = input.files[0];
+
+        if (!archivo) {
+            return; 
+        }
+        
+        // Verifica la extensión del archivo
+        if (!archivo.name.toLowerCase().endsWith('.json')) {
+             alert('Solo se permiten archivos JSON.');
+             input.value = ''; // Resetear el input para permitir otra selección
+             return;
+        }
+
+        if (!confirm(`¿Estás seguro de que quieres IMPORTAR el archivo "${archivo.name}"? Esto SOBRESCRIBIRÁ todos los datos actuales.`)) {
+             input.value = ''; // Resetear el input si cancela
+             return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('file', archivo); // 'file' debe coincidir con el parámetro en FastAPI
+
+            const respuesta = await fetch('/importar', {
+                method: 'POST',
+                body: formData 
+            });
+
+            if (respuesta.ok) {
+                const datos = await respuesta.json();
+                alert("Importación exitosa. Datos cargados y saldos actualizados.");
+                actualizarTablaYDom(datos);
+            } else {
+                const errorData = await respuesta.json();
+                alert("Error en la importación: " + (errorData.detail || respuesta.statusText));
+            }
+
+        } catch (error) {
+            console.error('Error de red al importar:', error);
+            alert("No se pudo conectar con el servidor para importar los datos.");
+        } finally {
+             input.value = ''; // Resetear el input siempre al finalizar
         }
     }
 </script>
