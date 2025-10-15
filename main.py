@@ -82,7 +82,12 @@ async def index(request: Request):
     
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "movimientos": movimientos_ordenados, "saldos": saldos}
+        {
+            "request": request, 
+            "movimientos": movimientos_ordenados, 
+            "saldos": saldos,
+            "movimientos_json": json.dumps(movimientos_ordenados)  # <-- NUEVO: Para los filtros
+        }
     )
 
 @app.post("/guardar")
@@ -101,6 +106,35 @@ async def guardar_movimiento(movimiento: Movimiento):
     
     movimientos_ordenados, saldos = sort_and_recalculate(movimientos)
     
+    return {
+        'movimientos': movimientos_ordenados,
+        'saldos': saldos
+    }
+
+# NUEVA RUTA: Modificar movimiento
+@app.put("/modificar/{movimiento_id}")
+async def modificar_movimiento(movimiento_id: str, movimiento: Movimiento):
+    """Ruta PUT: Modifica un movimiento existente por su ID."""
+    
+    movimientos = load_data()
+    
+    # Busca el índice del movimiento con el ID dado
+    try:
+        index_to_modify = next(i for i, mov in enumerate(movimientos) if mov.get('id') == movimiento_id)
+    except StopIteration:
+        # Si el ID no se encuentra, lanza un error HTTP 404
+        raise HTTPException(status_code=404, detail="Movimiento no encontrado.")
+    
+    # Actualizar el movimiento
+    movimiento_actualizado = movimiento.model_dump()
+    movimiento_actualizado['id'] = movimiento_id  # Mantener el mismo ID
+    
+    movimientos[index_to_modify] = movimiento_actualizado
+    save_data(movimientos)
+    
+    movimientos_ordenados, saldos = sort_and_recalculate(movimientos)
+    
+    # Devuelve la lista y saldos actualizados
     return {
         'movimientos': movimientos_ordenados,
         'saldos': saldos
@@ -130,7 +164,6 @@ async def eliminar_movimiento(movimiento_id: str):
         'movimientos': movimientos_ordenados,
         'saldos': saldos
     }
-
 
 # --- NUEVAS RUTAS DE IMPORTACIÓN/EXPORTACIÓN ---
 
@@ -178,3 +211,19 @@ async def importar_datos(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="El archivo JSON no es válido o está corrupto.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error interno al importar: {e}")
+
+# NUEVA RUTA: API para obtener movimientos (para filtros)
+@app.get("/api/movimientos")
+async def api_movimientos():
+    """Ruta GET: Devuelve todos los movimientos en formato JSON (para filtros)."""
+    movimientos = load_data()
+    movimientos_ordenados, _ = sort_and_recalculate(movimientos)
+    return movimientos_ordenados
+
+# NUEVA RUTA: API para obtener resumen
+@app.get("/api/resumen")
+async def api_resumen():
+    """Ruta GET: Devuelve el resumen de saldos."""
+    movimientos = load_data()
+    _, saldos = sort_and_recalculate(movimientos)
+    return saldos

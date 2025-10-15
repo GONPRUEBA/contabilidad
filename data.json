@@ -19,5 +19,12 @@
         "asunto": "O",
         "tipo": "BANCO",
         "cantidad": 1.0
+    },
+    {
+        "id": "61165aab-12b0-413e-8fa0-134cbb80494e",
+        "fecha": "2025-03-12",
+        "asunto": "opa",
+        "tipo": "BANCO",
+        "cantidad": 700.0
     }
 ]

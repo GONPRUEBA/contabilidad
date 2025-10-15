@@ -49,6 +49,73 @@
         .acciones-datos input[type="file"] {
             display: none;
         }
+
+        /* --- NUEVO: Filtros --- */
+        .filtros {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .filtros h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.2em;
+        }
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        .filtro-grupo {
+            display: flex;
+            flex-direction: column;
+        }
+        .filtro-grupo label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #495057;
+            font-size: 0.9em;
+        }
+        .filtro-grupo input, .filtro-grupo select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .botones-filtros {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            grid-column: 1 / -1;
+        }
+        .btn-filtrar {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-filtrar:hover {
+            background-color: #5a6268;
+        }
+        .btn-limpiar {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-limpiar:hover {
+            background-color: #c82333;
+        }
         
         /* --- Salarios (Flexbox) --- */
         .salarios { 
@@ -131,9 +198,29 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9em;
+            margin-right: 5px;
         }
         .btn-eliminar:hover {
             background-color: #c82333;
+        }
+
+        /* Estilo para el botón de modificar */
+        .btn-modificar {
+            background-color: #ffc107; /* Amarillo */
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-modificar:hover {
+            background-color: #e0a800;
+        }
+
+        /* Estilo para fila en modo edición */
+        .fila-edicion {
+            background-color: #fff3cd !important; /* Fondo amarillo claro */
         }
 
         /* --- MEDIA QUERIES (ADAPTACIÓN A MÓVILES) --- */
@@ -154,6 +241,21 @@
                 width: 100%; 
                 margin: 0; 
             }
+
+            /* Ajuste para filtros en móvil */
+            .filtros-grid {
+                grid-template-columns: 1fr;
+            }
+            .botones-filtros {
+                flex-direction: column;
+            }
+
+            /* Ajuste para botones en móvil */
+            .btn-eliminar, .btn-modificar {
+                padding: 8px 12px;
+                margin-bottom: 5px;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -172,7 +274,19 @@
         </button>
     </div>
 
-    <div class="salarios">
+        <div class="formulario">
+        <input type="date" id="inputFecha" required title="Selecciona la fecha de la transacción">
+        <input type="text" id="inputAsunto" placeholder="Asunto / Concepto" required>
+        <select id="inputTipo" required>
+            <option value="" disabled selected>Tipo</option>
+            <option value="BANCO">BANCO</option>
+            <option value="CASH">CASH</option>
+        </select>
+        <input type="number" id="inputCantidad" placeholder="Cantidad (+Ingreso, -Gasto)" step="0.01" required>
+        <button onclick="guardarMovimiento()">OK / GUARDAR</button>
+    </div>
+
+        <div class="salarios">
         <div>
             <strong>SALDO BANCO:</strong>
             <span id="saldoBanco">{{ saldos.banco | default('0.00') }}</span> €
@@ -187,17 +301,48 @@
         </div>
     </div>
 
-    <div class="formulario">
-        <input type="date" id="inputFecha" required title="Selecciona la fecha de la transacción">
-        <input type="text" id="inputAsunto" placeholder="Asunto / Concepto" required>
-        <select id="inputTipo" required>
-            <option value="" disabled selected>Tipo</option>
-            <option value="BANCO">BANCO</option>
-            <option value="CASH">CASH</option>
-        </select>
-        <input type="number" id="inputCantidad" placeholder="Cantidad (+Ingreso, -Gasto)" step="0.01" required>
-        <button onclick="guardarMovimiento()">OK / GUARDAR</button>
+    <!-- NUEVA SECCIÓN: FILTROS -->
+    <div class="filtros">
+        <h3>🔍 Filtros de Búsqueda</h3>
+        <div class="filtros-grid">
+            <div class="filtro-grupo">
+                <label for="filtroFechaDesde">Fecha Desde</label>
+                <input type="date" id="filtroFechaDesde">
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroFechaHasta">Fecha Hasta</label>
+                <input type="date" id="filtroFechaHasta">
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroCantidadMin">Cantidad Mínima</label>
+                <input type="number" id="filtroCantidadMin" placeholder="0.00" step="0.01">
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroCantidadMax">Cantidad Máxima</label>
+                <input type="number" id="filtroCantidadMax" placeholder="0.00" step="0.01">
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroTipo">Tipo</label>
+                <select id="filtroTipo">
+                    <option value="">Todos los tipos</option>
+                    <option value="BANCO">BANCO</option>
+                    <option value="CASH">CASH</option>
+                </select>
+            </div>
+            <div class="botones-filtros">
+                <button class="btn-filtrar" onclick="aplicarFiltros()">
+                    🔍 Aplicar Filtros
+                </button>
+                <button class="btn-limpiar" onclick="limpiarFiltros()">
+                    🗑️ Limpiar Filtros
+                </button>
+            </div>
+        </div>
     </div>
+
+
+
+
 
     <h2>Movimientos Registrados</h2>
     <div class="table-wrapper">
@@ -219,6 +364,9 @@
                     <td>{{ mov.tipo }}</td>
                     <td>{{ mov.cantidad }} €</td>
                     <td>
+                        <button class="btn-modificar" onclick="iniciarModificacion('{{ mov.id }}')">
+                            Modificar
+                        </button>
                         <button class="btn-eliminar" onclick="eliminarMovimiento('{{ mov.id }}')">
                             Eliminar
                         </button>
@@ -231,10 +379,42 @@
 </div>
 
 <script>
+    // Variable para controlar si estamos editando
+    let editandoMovimientoId = null;
+    // Variable para almacenar todos los movimientos (para filtros)
+    let todosLosMovimientos = [];
+
     // ---------------------------------------------
     // Funciones JavaScript
     // ---------------------------------------------
     
+    // Cargar todos los movimientos al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Guardar los movimientos iniciales para filtros
+        try {
+            todosLosMovimientos = JSON.parse('{{ movimientos_json | safe }}');
+        } catch (error) {
+            console.error('Error cargando movimientos:', error);
+            // Si falla, cargar desde la API
+            cargarMovimientosDesdeAPI();
+        }
+    });
+
+    async function cargarMovimientosDesdeAPI() {
+        try {
+            const respuesta = await fetch('/api/movimientos');
+            if (respuesta.ok) {
+                todosLosMovimientos = await respuesta.json();
+            } else {
+                console.error('Error cargando movimientos para filtros');
+                todosLosMovimientos = [];
+            }
+        } catch (error) {
+            console.error('Error de red:', error);
+            todosLosMovimientos = [];
+        }
+    }
+
     function actualizarTablaYDom(datos) {
         // 1. Actualizar la tabla
         const tablaBody = document.getElementById('tablaMovimientos');
@@ -242,18 +422,19 @@
 
         datos.movimientos.forEach(mov => {
             const fila = tablaBody.insertRow();
-            // Asignar ID para uso futuro si es necesario
             fila.id = `movimiento-${mov.id}`; 
             
             fila.insertCell().textContent = mov.fecha;
             fila.insertCell().textContent = mov.asunto;
             fila.insertCell().textContent = mov.tipo;
-            // Asegurar el formato con 2 decimales
             fila.insertCell().textContent = parseFloat(mov.cantidad).toFixed(2) + ' €'; 
             
-            // Botón Eliminar
+            // Botones Modificar y Eliminar
             const cellAcciones = fila.insertCell();
             cellAcciones.innerHTML = `
+                <button class="btn-modificar" onclick="iniciarModificacion('${mov.id}')">
+                    Modificar
+                </button>
                 <button class="btn-eliminar" onclick="eliminarMovimiento('${mov.id}')">
                     Eliminar
                 </button>
@@ -264,8 +445,129 @@
         document.getElementById('saldoBanco').textContent = datos.saldos.banco.toFixed(2);
         document.getElementById('saldoCash').textContent = datos.saldos.cash.toFixed(2);
         document.getElementById('saldoTotal').textContent = datos.saldos.total.toFixed(2);
+
+        // 3. Resetear estado de edición
+        editandoMovimientoId = null;
+        document.querySelector('button[onclick="guardarMovimiento()"]').textContent = 'OK / GUARDAR';
+
+        // 4. Actualizar la variable global con todos los movimientos
+        todosLosMovimientos = datos.movimientos;
     }
 
+    // FUNCIÓN: APLICAR FILTROS
+    function aplicarFiltros() {
+        const fechaDesde = document.getElementById('filtroFechaDesde').value;
+        const fechaHasta = document.getElementById('filtroFechaHasta').value;
+        const cantidadMin = document.getElementById('filtroCantidadMin').value;
+        const cantidadMax = document.getElementById('filtroCantidadMax').value;
+        const tipo = document.getElementById('filtroTipo').value;
+
+        let movimientosFiltrados = [...todosLosMovimientos];
+
+        // Filtrar por fecha
+        if (fechaDesde) {
+            movimientosFiltrados = movimientosFiltrados.filter(mov => mov.fecha >= fechaDesde);
+        }
+        if (fechaHasta) {
+            movimientosFiltrados = movimientosFiltrados.filter(mov => mov.fecha <= fechaHasta);
+        }
+
+        // Filtrar por cantidad
+        if (cantidadMin) {
+            movimientosFiltrados = movimientosFiltrados.filter(mov => parseFloat(mov.cantidad) >= parseFloat(cantidadMin));
+        }
+        if (cantidadMax) {
+            movimientosFiltrados = movimientosFiltrados.filter(mov => parseFloat(mov.cantidad) <= parseFloat(cantidadMax));
+        }
+
+        // Filtrar por tipo
+        if (tipo) {
+            movimientosFiltrados = movimientosFiltrados.filter(mov => mov.tipo === tipo);
+        }
+
+        // Actualizar la tabla con los movimientos filtrados
+        actualizarTablaConFiltros(movimientosFiltrados);
+    }
+
+    // FUNCIÓN: ACTUALIZAR TABLA CON FILTROS
+    function actualizarTablaConFiltros(movimientosFiltrados) {
+        const tablaBody = document.getElementById('tablaMovimientos');
+        tablaBody.innerHTML = '';
+
+        if (movimientosFiltrados.length === 0) {
+            const fila = tablaBody.insertRow();
+            const cell = fila.insertCell();
+            cell.colSpan = 5;
+            cell.textContent = 'No se encontraron movimientos con los filtros aplicados';
+            cell.style.textAlign = 'center';
+            cell.style.color = '#6c757d';
+            return;
+        }
+
+        movimientosFiltrados.forEach(mov => {
+            const fila = tablaBody.insertRow();
+            fila.id = `movimiento-${mov.id}`; 
+            
+            fila.insertCell().textContent = mov.fecha;
+            fila.insertCell().textContent = mov.asunto;
+            fila.insertCell().textContent = mov.tipo;
+            fila.insertCell().textContent = parseFloat(mov.cantidad).toFixed(2) + ' €'; 
+            
+            const cellAcciones = fila.insertCell();
+            cellAcciones.innerHTML = `
+                <button class="btn-modificar" onclick="iniciarModificacion('${mov.id}')">
+                    Modificar
+                </button>
+                <button class="btn-eliminar" onclick="eliminarMovimiento('${mov.id}')">
+                    Eliminar
+                </button>
+            `;
+        });
+    }
+
+    // FUNCIÓN: LIMPIAR FILTROS
+    function limpiarFiltros() {
+        document.getElementById('filtroFechaDesde').value = '';
+        document.getElementById('filtroFechaHasta').value = '';
+        document.getElementById('filtroCantidadMin').value = '';
+        document.getElementById('filtroCantidadMax').value = '';
+        document.getElementById('filtroTipo').value = '';
+        
+        // Mostrar todos los movimientos nuevamente
+        actualizarTablaConFiltros(todosLosMovimientos);
+    }
+
+    // FUNCIÓN: INICIAR MODIFICACIÓN
+    function iniciarModificacion(movimientoId) {
+        const fila = document.getElementById(`movimiento-${movimientoId}`);
+        if (!fila) return;
+
+        // Obtener datos actuales de la fila
+        const celdas = fila.getElementsByTagName('td');
+        const fechaActual = celdas[0].textContent;
+        const asuntoActual = celdas[1].textContent;
+        const tipoActual = celdas[2].textContent;
+        const cantidadActual = celdas[3].textContent.replace(' €', '');
+
+        // Llenar el formulario con los datos actuales
+        document.getElementById('inputFecha').value = fechaActual;
+        document.getElementById('inputAsunto').value = asuntoActual;
+        document.getElementById('inputTipo').value = tipoActual;
+        document.getElementById('inputCantidad').value = cantidadActual;
+
+        // Cambiar a modo edición
+        editandoMovimientoId = movimientoId;
+        document.querySelector('button[onclick="guardarMovimiento()"]').textContent = 'ACTUALIZAR';
+
+        // Resaltar la fila que se está editando
+        document.querySelectorAll('tr').forEach(tr => tr.classList.remove('fila-edicion'));
+        fila.classList.add('fila-edicion');
+
+        // Hacer scroll suave al formulario
+        document.querySelector('.formulario').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // FUNCIÓN: GUARDAR MOVIMIENTO (crear o actualizar)
     async function guardarMovimiento() {
         const fecha = document.getElementById('inputFecha').value;
         const asunto = document.getElementById('inputAsunto').value;
@@ -277,7 +579,7 @@
             return;
         }
 
-        const nuevoMovimiento = { 
+        const movimientoData = { 
             fecha: fecha, 
             asunto: asunto, 
             tipo: tipo, 
@@ -285,21 +587,31 @@
         };
 
         try {
-            const respuesta = await fetch('/guardar', {
-                method: 'POST',
+            let url = '/guardar';
+            let method = 'POST';
+
+            // Si estamos editando, cambiar a PUT y añadir ID
+            if (editandoMovimientoId) {
+                url = `/modificar/${editandoMovimientoId}`;
+                method = 'PUT';
+            }
+
+            const respuesta = await fetch(url, {
+                method: method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(nuevoMovimiento)
+                body: JSON.stringify(movimientoData)
             });
 
             if (respuesta.ok) {
                 const datos = await respuesta.json();
                 actualizarTablaYDom(datos);
 
+                // Limpiar formulario
                 document.getElementById('inputFecha').value = '';
                 document.getElementById('inputAsunto').value = '';
                 document.getElementById('inputTipo').value = '';
                 document.getElementById('inputCantidad').value = '';
-                document.getElementById('inputFecha').focus(); 
+                document.getElementById('inputFecha').focus();
 
             } else {
                 const errorData = await respuesta.json();
@@ -318,14 +630,13 @@
         }
 
         try {
-            // Envía la solicitud DELETE al endpoint /eliminar/{id}
             const respuesta = await fetch(`/eliminar/${movimiento_id}`, {
                 method: 'DELETE',
             });
 
             if (respuesta.ok) {
                 const datos = await respuesta.json();
-                actualizarTablaYDom(datos); // El servidor devuelve la lista de movimientos actualizada
+                actualizarTablaYDom(datos);
             } else {
                 const errorData = await respuesta.json();
                 alert("Error al eliminar el movimiento: " + errorData.detail);
@@ -336,10 +647,9 @@
         }
     }
 
-    // --- NUEVAS FUNCIONES DE IMPORTACIÓN/EXPORTACIÓN ---
+    // --- FUNCIONES DE IMPORTACIÓN/EXPORTACIÓN ---
 
     function exportarDatos() {
-        // Simplemente redirige para que el navegador descargue el archivo
         window.location.href = '/exportar';
     }
 
@@ -351,21 +661,20 @@
             return; 
         }
         
-        // Verifica la extensión del archivo
         if (!archivo.name.toLowerCase().endsWith('.json')) {
              alert('Solo se permiten archivos JSON.');
-             input.value = ''; // Resetear el input para permitir otra selección
+             input.value = '';
              return;
         }
 
         if (!confirm(`¿Estás seguro de que quieres IMPORTAR el archivo "${archivo.name}"? Esto SOBRESCRIBIRÁ todos los datos actuales.`)) {
-             input.value = ''; // Resetear el input si cancela
+             input.value = '';
              return;
         }
 
         try {
             const formData = new FormData();
-            formData.append('file', archivo); // 'file' debe coincidir con el parámetro en FastAPI
+            formData.append('file', archivo);
 
             const respuesta = await fetch('/importar', {
                 method: 'POST',
@@ -385,7 +694,7 @@
             console.error('Error de red al importar:', error);
             alert("No se pudo conectar con el servidor para importar los datos.");
         } finally {
-             input.value = ''; // Resetear el input siempre al finalizar
+             input.value = '';
         }
     }
 </script>
