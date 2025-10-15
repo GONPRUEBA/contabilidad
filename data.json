@@ -14,17 +14,17 @@
         "cantidad": 3000.0
     },
     {
-        "id": "72f660bc-b3d9-4fe1-a5bd-509292d2777d",
-        "fecha": "2025-10-15",
-        "asunto": "O",
-        "tipo": "BANCO",
-        "cantidad": 1.0
-    },
-    {
         "id": "61165aab-12b0-413e-8fa0-134cbb80494e",
         "fecha": "2025-03-12",
         "asunto": "opa",
         "tipo": "BANCO",
         "cantidad": 700.0
+    },
+    {
+        "id": "1d7cfa57-4bdc-4e29-b119-6630b6ef839c",
+        "fecha": "2025-10-15",
+        "asunto": "OPA",
+        "tipo": "BANCO",
+        "cantidad": -52.0
     }
 ]
