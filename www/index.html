@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>CONTABILIDAD B</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>CONTABILIDAD B 📊</h1>
+        
+        <div class="acciones-datos">
+            <button class="btn-exportar" onclick="exportarDatos()">💾 Exportar Datos</button>
+            <input type="file" id="inputArchivo" accept=".json" onchange="manejarImportacion()">
+            <button class="btn-importar" onclick="document.getElementById('inputArchivo').click()">⬆️ Importar Datos</button>
+        </div>
+
+        <div class="salarios">
+            <div><strong>SALDO BANCO:</strong> <span id="saldoBanco">0.00</span> €</div>
+            <div><strong>SALDO CASH:</strong> <span id="saldoCash">0.00</span> €</div>
+            <div><strong>TOTAL:</strong> <span id="saldoTotal">0.00</span> €</div>
+        </div>
+
+        <div class="formulario">
+            <input type="date" id="inputFecha" required title="Selecciona la fecha de la transacción">
+            <input type="text" id="inputAsunto" placeholder="Asunto / Concepto" required>
+            <select id="inputTipo" required>
+                <option value="" disabled selected>Tipo</option>
+                <option value="BANCO">BANCO</option>
+                <option value="CASH">CASH</option>
+            </select>
+            <input type="text" id="inputCantidad" placeholder="Cantidad (+Ingreso, -Gasto)" required>
+            <button onclick="guardarMovimiento()">OK / GUARDAR</button>
+        </div>
+
+        <div class="filtros">
+            <h3>🔍 Filtros de Búsqueda</h3>
+            <div class="filtros-grid">
+                <div class="filtro-grupo">
+                    <label for="filtroFechaDesde">Fecha Desde</label>
+                    <input type="date" id="filtroFechaDesde">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroFechaHasta">Fecha Hasta</label>
+                    <input type="date" id="filtroFechaHasta">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroCantidadMin">Cantidad Mínima</label>
+                    <input type="number" id="filtroCantidadMin" placeholder="0.00" step="0.01">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroCantidadMax">Cantidad Máxima</label>
+                    <input type="number" id="filtroCantidadMax" placeholder="0.00" step="0.01">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroTipo">Tipo</label>
+                    <select id="filtroTipo">
+                        <option value="">Todos los tipos</option>
+                        <option value="BANCO">BANCO</option>
+                        <option value="CASH">CASH</option>
+                    </select>
+                </div>
+                <div class="botones-filtros">
+                    <button class="btn-filtrar" onclick="aplicarFiltros()">🔍 Aplicar Filtros</button>
+                    <button class="btn-limpiar" onclick="limpiarFiltros()">🗑️ Limpiar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <h2>Movimientos Registrados</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>FECHA</th>
+                        <th>ASUNTO</th>
+                        <th>TIPO</th>
+                        <th>CANTIDAD</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaMovimientos"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

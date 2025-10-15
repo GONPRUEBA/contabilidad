@@ -1,0 +1,252 @@
+/* --- Estilos Base --- */
+body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f9; }
+*, *::before, *::after {
+    box-sizing: border-box; 
+}
+.container { max-width: 1200px; margin: 10px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
+h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
+
+/* --- NUEVO ESTILO: Acciones de Datos (Importar/Exportar) --- */
+.acciones-datos {
+    display: flex;
+    gap: 15px; /* Espacio entre botones */
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    background: #e9e9f9; /* Fondo ligero para la sección */
+}
+.acciones-datos button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    flex-grow: 1; 
+    max-width: 250px;
+}
+.acciones-datos .btn-exportar {
+    background-color: #ffc107; /* Amarillo para exportar */
+    color: #333;
+}
+.acciones-datos .btn-exportar:hover {
+    background-color: #e0a800;
+}
+.acciones-datos .btn-importar {
+    background-color: #17a2b8; /* Azul claro para importar */
+    color: white;
+}
+.acciones-datos .btn-importar:hover {
+    background-color: #138496;
+}
+/* Ocultar input de archivo por defecto */
+.acciones-datos input[type="file"] {
+    display: none;
+}
+
+/* --- NUEVO: Filtros --- */
+.filtros {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+.filtros h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 1.2em;
+}
+.filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: end;
+}
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+}
+.filtro-grupo label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #495057;
+    font-size: 0.9em;
+}
+.filtro-grupo input, .filtro-grupo select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+.botones-filtros {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    grid-column: 1 / -1;
+}
+.btn-filtrar {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.btn-filtrar:hover {
+    background-color: #5a6268;
+}
+.btn-limpiar {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.btn-limpiar:hover {
+    background-color: #c82333;
+}
+
+/* --- Salarios (Flexbox) --- */
+.salarios { 
+    display: flex; 
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 30px; 
+    background: #e9ecef; 
+    padding: 10px; 
+    border-radius: 6px; 
+}
+.salarios div { 
+    padding: 10px 15px;
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    text-align: center; 
+    font-size: 1em; 
+    background: white; 
+    flex-grow: 1; 
+    min-width: 250px; 
+    margin: 5px; 
+}
+.salarios span { font-size: 1.3em; font-weight: bold; display: block; margin-top: 5px; color: #333; }
+
+/* --- Formulario (Flexbox) --- */
+.formulario { 
+    margin-bottom: 25px; 
+    padding: 15px; 
+    background: #cce5ff; 
+    border-radius: 8px; 
+    display: flex; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 10px;
+}
+.formulario input, .formulario select { 
+    padding: 10px; 
+    border: 1px solid #999; 
+    border-radius: 4px; 
+    flex: 1 1 120px; 
+    min-width: 100px;
+}
+.formulario button { 
+    padding: 10px 20px; 
+    background-color: #28a745; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    white-space: nowrap; 
+    flex-shrink: 0; 
+}
+.formulario button:hover { background-color: #218838; }
+
+/* --- Tabla --- */
+.table-wrapper {
+    overflow-x: auto; 
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+}
+th, td { 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    text-align: left; 
+    white-space: nowrap;
+}
+th { background-color: #007bff; color: white; }
+tr:nth-child(even) { background-color: #f2f2f2; }
+
+/* Estilo para el botón de eliminar */
+.btn-eliminar {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-right: 5px;
+}
+.btn-eliminar:hover {
+    background-color: #c82333;
+}
+
+/* Estilo para el botón de modificar */
+.btn-modificar {
+    background-color: #ffc107; /* Amarillo */
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.btn-modificar:hover {
+    background-color: #e0a800;
+}
+
+/* Estilo para fila en modo edición */
+.fila-edicion {
+    background-color: #fff3cd !important; /* Fondo amarillo claro */
+}
+
+/* --- MEDIA QUERIES (ADAPTACIÓN A MÓVILES) --- */
+@media (max-width: 768px) {
+    .container { padding: 15px; margin: 0; }
+    h1 { font-size: 1.5em; text-align: center; }
+
+    .salarios { flex-direction: column; padding: 10px; }
+    .salarios div { min-width: 100%; margin: 5px 0; }
+    
+    /* Ajuste para los nuevos botones en móvil */
+    .acciones-datos { flex-direction: column; gap: 10px; padding: 15px; }
+    .acciones-datos button { max-width: 100%; }
+
+    .formulario { flex-direction: column; align-items: stretch; padding: 15px; }
+    .formulario input, .formulario select, .formulario button {
+        flex: 1 1 auto;
+        width: 100%; 
+        margin: 0; 
+    }
+
+    /* Ajuste para filtros en móvil */
+    .filtros-grid {
+        grid-template-columns: 1fr;
+    }
+    .botones-filtros {
+        flex-direction: column;
+    }
+
+    /* Ajuste para botones en móvil */
+    .btn-eliminar, .btn-modificar {
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        width: 100%;
+    }
+}
