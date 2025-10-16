@@ -81,7 +81,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const datos = gestorDatos.datos;
     todosLosMovimientos = datos.movimientos;
     actualizarTablaYDom(datos);
+    
+    // Solicitar permisos de almacenamiento al iniciar (para móviles)
+    solicitarPermisosIniciales();
 });
+
+// ===========================================================
+// Función para solicitar permisos (móviles)
+// ===========================================================
+function solicitarPermisosIniciales() {
+    // En móviles, intentamos crear un blob pequeño para "activar" los permisos
+    try {
+        const blob = new Blob(['test'], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        // No hacemos nada con esta URL, solo la creamos para activar permisos
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (e) {
+        console.log('Preparando permisos de almacenamiento...');
+    }
+}
 
 // ===========================================================
 // CRUD y DOM
@@ -205,39 +223,87 @@ function limpiarFiltros() {
 }
 
 // ===========================================================
-// Exportar / Importar
+// Exportar / Importar - VERSIÓN MEJORADA PARA MÓVILES
 // ===========================================================
-async function exportarDatos() {
-    const datos = gestorDatos.exportarDatos();
-    if (window.showSaveFilePicker) {
-        try {
-            const opciones = {
-                suggestedName: "contabilidad_data.json",
-                types: [{ description: "Archivo JSON", accept: { "application/json": [".json"] } }]
-            };
-            const handle = await window.showSaveFilePicker(opciones);
-            const writable = await handle.createWritable();
-            await writable.write(datos);
-            await writable.close();
-            alert("✅ Archivo guardado correctamente");
-        } catch (err) {
-            descargarAlternativo(datos);
+function exportarDatos() {
+    try {
+        const datos = gestorDatos.exportarDatos();
+        const blob = new Blob([datos], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        // Crear enlace de descarga
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.download = 'contabilidad_data_' + new Date().toISOString().split('T')[0] + '.json';
+        enlace.style.display = 'none';
+        
+        // Agregar al DOM y hacer click
+        document.body.appendChild(enlace);
+        
+        // Intentar descarga directa
+        enlace.click();
+        
+        // Limpiar
+        document.body.removeChild(enlace);
+        
+        // Liberar memoria después de un tiempo
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 1000);
+        
+        // Mensaje informativo para móviles
+        setTimeout(() => {
+            if (esDispositivoMovil()) {
+                alert('✅ Datos exportados. En móviles, el archivo se guarda en la carpeta "Descargas" o "Downloads". Si no ves la descarga, revisa tu gestor de archivos.');
+            } else {
+                alert('✅ Datos exportados correctamente. El archivo se ha descargado.');
+            }
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error al exportar:', error);
+        
+        // Fallback para dispositivos problemáticos
+        if (esDispositivoMovil()) {
+            alert('❌ Error en la exportación. Intenta:\n1. Dar permisos de almacenamiento al navegador\n2. Usar Chrome en lugar de Samsung Internet\n3. Verificar que tienes espacio disponible');
+        } else {
+            alert('❌ Error al exportar los datos: ' + error.message);
         }
-    } else {
-        descargarAlternativo(datos);
     }
 }
 
-function descargarAlternativo(datos) {
+// Función para detectar si es móvil
+function esDispositivoMovil() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (navigator.userAgent.includes('Samsung') && navigator.userAgent.includes('Mobile'));
+}
+
+// Función alternativa de exportación (más compatible)
+function exportarDatosAlternativo() {
+    const datos = gestorDatos.exportarDatos();
+    
+    // Método alternativo: crear archivo de texto y abrir en nueva pestaña
     const blob = new Blob([datos], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'contabilidad_data.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const text = e.target.result;
+        const nuevaVentana = window.open('', '_blank');
+        nuevaVentana.document.write(`
+            <html>
+                <head><title>Datos Contabilidad</title></head>
+                <body>
+                    <h2>Datos de Contabilidad</h2>
+                    <p>Guarda esta página como archivo .json</p>
+                    <pre>${text}</pre>
+                    <button onclick="window.print()">Imprimir/Guardar como PDF</button>
+                    <button onclick="window.close()">Cerrar</button>
+                </body>
+            </html>
+        `);
+    };
+    
+    reader.readAsText(blob);
 }
 
 function manejarImportacion() {

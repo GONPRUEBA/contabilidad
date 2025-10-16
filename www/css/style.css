@@ -182,31 +182,50 @@ th, td {
 th { background-color: #007bff; color: white; }
 tr:nth-child(even) { background-color: #f2f2f2; }
 
-/* Estilo para el botón de eliminar */
+/* =========================================================== */
+/* NUEVO: ESTILOS PARA BOTONES DE ACCIONES EN TABLA - ARREGLADO */
+/* =========================================================== */
+.acciones-botones {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
 .btn-eliminar {
     background-color: #dc3545; /* Rojo */
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 8px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9em;
-    margin-right: 5px;
+    font-size: 0.8em;
+    min-width: 35px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 .btn-eliminar:hover {
     background-color: #c82333;
 }
 
-/* Estilo para el botón de modificar */
 .btn-modificar {
     background-color: #ffc107; /* Amarillo */
     color: black;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 8px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.8em;
+    min-width: 35px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 .btn-modificar:hover {
     background-color: #e0a800;
 }
@@ -243,10 +262,48 @@ tr:nth-child(even) { background-color: #f2f2f2; }
         flex-direction: column;
     }
 
-    /* Ajuste para botones en móvil */
+    /* =========================================================== */
+    /* NUEVO: AJUSTES ESPECÍFICOS PARA BOTONES EN MÓVIL - ARREGLADO */
+    /* =========================================================== */
+    .acciones-botones {
+        gap: 3px;
+        flex-direction: column;
+        align-items: center;
+    }
+    
     .btn-eliminar, .btn-modificar {
-        padding: 8px 12px;
-        margin-bottom: 5px;
+        padding: 4px 6px;
+        font-size: 0.7em;
+        min-width: 30px;
+        height: 25px;
+        margin: 1px 0;
+    }
+    
+    /* Ajustar tabla para móviles */
+    table {
+        font-size: 0.8em;
+    }
+    
+    th, td {
+        padding: 6px 4px;
+    }
+    
+    /* Ocultar algunas columnas menos importantes en móviles muy pequeños */
+    @media (max-width: 480px) {
+        th:nth-child(3), td:nth-child(3) { /* Columna Tipo */
+            display: none;
+        }
+    }
+}
+
+/* Ajuste adicional para pantallas muy pequeñas */
+@media (max-width: 360px) {
+    .acciones-botones {
+        flex-direction: column;
+    }
+    
+    .btn-eliminar, .btn-modificar {
         width: 100%;
+        margin: 2px 0;
     }
 }
