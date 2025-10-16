@@ -81,25 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const datos = gestorDatos.datos;
     todosLosMovimientos = datos.movimientos;
     actualizarTablaYDom(datos);
-    
-    // Solicitar permisos de almacenamiento al iniciar (para móviles)
-    solicitarPermisosIniciales();
 });
-
-// ===========================================================
-// Función para solicitar permisos (móviles)
-// ===========================================================
-function solicitarPermisosIniciales() {
-    // En móviles, intentamos crear un blob pequeño para "activar" los permisos
-    try {
-        const blob = new Blob(['test'], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        // No hacemos nada con esta URL, solo la creamos para activar permisos
-        setTimeout(() => URL.revokeObjectURL(url), 100);
-    } catch (e) {
-        console.log('Preparando permisos de almacenamiento...');
-    }
-}
 
 // ===========================================================
 // CRUD y DOM
@@ -223,87 +205,169 @@ function limpiarFiltros() {
 }
 
 // ===========================================================
-// Exportar / Importar - VERSIÓN MEJORADA PARA MÓVILES
+// Exportar / Importar - SOLO JAVASCRIPT PURO
 // ===========================================================
 function exportarDatos() {
     try {
         const datos = gestorDatos.exportarDatos();
+        const nombreArchivo = 'contabilidad_data_' + new Date().toISOString().split('T')[0] + '.json';
+        
+        // Método principal: Blob + URL.createObjectURL
         const blob = new Blob([datos], { type: 'application/json;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         
-        // Crear enlace de descarga
         const enlace = document.createElement('a');
         enlace.href = url;
-        enlace.download = 'contabilidad_data_' + new Date().toISOString().split('T')[0] + '.json';
+        enlace.download = nombreArchivo;
         enlace.style.display = 'none';
         
-        // Agregar al DOM y hacer click
         document.body.appendChild(enlace);
-        
-        // Intentar descarga directa
         enlace.click();
-        
-        // Limpiar
         document.body.removeChild(enlace);
         
         // Liberar memoria después de un tiempo
         setTimeout(() => {
             URL.revokeObjectURL(url);
-        }, 1000);
+        }, 5000);
         
-        // Mensaje informativo para móviles
-        setTimeout(() => {
-            if (esDispositivoMovil()) {
-                alert('✅ Datos exportados. En móviles, el archivo se guarda en la carpeta "Descargas" o "Downloads". Si no ves la descarga, revisa tu gestor de archivos.');
-            } else {
-                alert('✅ Datos exportados correctamente. El archivo se ha descargado.');
-            }
-        }, 500);
+        alert('✅ Datos exportados. Revisa tu carpeta de "Descargas".');
         
     } catch (error) {
-        console.error('Error al exportar:', error);
-        
-        // Fallback para dispositivos problemáticos
-        if (esDispositivoMovil()) {
-            alert('❌ Error en la exportación. Intenta:\n1. Dar permisos de almacenamiento al navegador\n2. Usar Chrome en lugar de Samsung Internet\n3. Verificar que tienes espacio disponible');
-        } else {
-            alert('❌ Error al exportar los datos: ' + error.message);
-        }
+        console.error('Error en exportación:', error);
+        alert('❌ Error al exportar. Usa el método alternativo.');
     }
 }
 
-// Función para detectar si es móvil
-function esDispositivoMovil() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-           (navigator.userAgent.includes('Samsung') && navigator.userAgent.includes('Mobile'));
-}
-
-// Función alternativa de exportación (más compatible)
 function exportarDatosAlternativo() {
     const datos = gestorDatos.exportarDatos();
+    const nombreArchivo = 'contabilidad_data_' + new Date().toISOString().split('T')[0] + '.json';
     
-    // Método alternativo: crear archivo de texto y abrir en nueva pestaña
-    const blob = new Blob([datos], { type: 'application/json' });
-    const reader = new FileReader();
+    // Método alternativo: nueva ventana para copiar/pegar
+    const nuevaVentana = window.open('', '_blank');
+    if (!nuevaVentana) {
+        alert('⚠️ Por favor, permite ventanas emergentes para este sitio');
+        return;
+    }
     
-    reader.onload = function(e) {
-        const text = e.target.result;
-        const nuevaVentana = window.open('', '_blank');
-        nuevaVentana.document.write(`
-            <html>
-                <head><title>Datos Contabilidad</title></head>
-                <body>
-                    <h2>Datos de Contabilidad</h2>
-                    <p>Guarda esta página como archivo .json</p>
-                    <pre>${text}</pre>
-                    <button onclick="window.print()">Imprimir/Guardar como PDF</button>
-                    <button onclick="window.close()">Cerrar</button>
-                </body>
-            </html>
-        `);
-    };
+    nuevaVentana.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Exportar Datos Contabilidad</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    padding: 20px; 
+                    max-width: 800px; 
+                    margin: 0 auto; 
+                    line-height: 1.6;
+                    background: #f5f5f5;
+                }
+                .container { 
+                    background: white; 
+                    padding: 25px; 
+                    border-radius: 8px; 
+                    border: 1px solid #ddd;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                }
+                h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+                pre { 
+                    background: #2d2d2d; 
+                    color: #f8f8f2; 
+                    padding: 15px; 
+                    border-radius: 5px; 
+                    overflow-x: auto;
+                    font-size: 12px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                    border: 1px solid #444;
+                }
+                .botones { 
+                    margin: 20px 0; 
+                    text-align: center;
+                }
+                button { 
+                    padding: 12px 20px; 
+                    margin: 8px; 
+                    border: none; 
+                    border-radius: 5px; 
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: bold;
+                    transition: background 0.3s;
+                }
+                .copiar { background: #28a745; color: white; }
+                .copiar:hover { background: #218838; }
+                .instrucciones { 
+                    background: #fff3cd; 
+                    border: 1px solid #ffeaa7; 
+                    padding: 15px; 
+                    border-radius: 5px;
+                    margin: 15px 0;
+                    color: #856404;
+                }
+                .exito { 
+                    background: #d4edda; 
+                    border: 1px solid #c3e6cb; 
+                    padding: 10px; 
+                    border-radius: 5px;
+                    margin: 10px 0;
+                    color: #155724;
+                    display: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>📊 Datos de Contabilidad Exportados</h1>
+                
+                <div class="instrucciones">
+                    <h3>📝 Instrucciones para guardar:</h3>
+                    <p><strong>Opción 1 (Recomendada):</strong> Usa el botón "Copiar Texto" y luego pégalo en un archivo nuevo llamado <strong>${nombreArchivo}</strong></p>
+                    <p><strong>Opción 2:</strong> Selecciona y copia manualmente el texto de abajo (ya está seleccionado)</p>
+                    <p><strong>Opción 3:</strong> Toma captura de pantalla si solo necesitas consulta rápida</p>
+                    <p><em>Puedes cerrar esta ventana cuando termines</em></p>
+                </div>
+                
+                <div class="exito" id="mensajeExito">✅ Texto copiado al portapapeles correctamente</div>
+                
+                <div class="botones">
+                    <button class="copiar" onclick="copiarTexto()">📋 Copiar Texto</button>
+                </div>
+                
+                <pre id="datosJson">${datos}</pre>
+                
+                <script>
+                    function copiarTexto() {
+                        const texto = document.getElementById('datosJson').innerText;
+                        navigator.clipboard.writeText(texto).then(() => {
+                            document.getElementById('mensajeExito').style.display = 'block';
+                            setTimeout(() => {
+                                document.getElementById('mensajeExito').style.display = 'none';
+                            }, 3000);
+                        }).catch(err => {
+                            alert('❌ Error al copiar: ' + err);
+                        });
+                    }
+                    
+                    // Auto-seleccionar texto para facilitar copia manual
+                    window.onload = function() {
+                        const pre = document.getElementById('datosJson');
+                        const range = document.createRange();
+                        range.selectNodeContents(pre);
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    };
+                </script>
+            </div>
+        </body>
+        </html>
+    `);
     
-    reader.readAsText(blob);
+    nuevaVentana.document.close();
 }
 
 function manejarImportacion() {

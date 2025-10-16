@@ -1,19 +1,38 @@
 /* --- Estilos Base --- */
-body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f9; }
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 0; 
+    padding: 10px; 
+    background-color: #f4f4f9; 
+}
 *, *::before, *::after {
     box-sizing: border-box; 
 }
-.container { max-width: 1200px; margin: 10px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
-h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
+.container { 
+    max-width: 1200px; 
+    margin: 10px auto; 
+    background: white; 
+    padding: 25px; 
+    border-radius: 8px; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); 
+}
+h1 { 
+    color: #007bff; 
+    border-bottom: 2px solid #007bff; 
+    padding-bottom: 10px; 
+    margin-bottom: 20px; 
+    font-size: 1.8em; 
+    text-align: center;
+}
 
 /* --- NUEVO ESTILO: Acciones de Datos (Importar/Exportar) --- */
 .acciones-datos {
     display: flex;
-    gap: 15px; /* Espacio entre botones */
+    gap: 15px;
     margin-bottom: 20px;
     padding: 10px;
     border-radius: 6px;
-    background: #e9e9f9; /* Fondo ligero para la sección */
+    background: #e9e9f9;
 }
 .acciones-datos button {
     padding: 10px 15px;
@@ -23,22 +42,29 @@ h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; mar
     font-weight: bold;
     flex-grow: 1; 
     max-width: 250px;
+    transition: background-color 0.3s ease;
 }
 .acciones-datos .btn-exportar {
-    background-color: #ffc107; /* Amarillo para exportar */
+    background-color: #ffc107;
     color: #333;
 }
 .acciones-datos .btn-exportar:hover {
     background-color: #e0a800;
 }
+.acciones-datos .btn-exportar-alt {
+    background-color: #ff6b35;
+    color: white;
+}
+.acciones-datos .btn-exportar-alt:hover {
+    background-color: #e55a2b;
+}
 .acciones-datos .btn-importar {
-    background-color: #17a2b8; /* Azul claro para importar */
+    background-color: #17a2b8;
     color: white;
 }
 .acciones-datos .btn-importar:hover {
     background-color: #138496;
 }
-/* Ocultar input de archivo por defecto */
 .acciones-datos input[type="file"] {
     display: none;
 }
@@ -131,7 +157,13 @@ h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; mar
     min-width: 250px; 
     margin: 5px; 
 }
-.salarios span { font-size: 1.3em; font-weight: bold; display: block; margin-top: 5px; color: #333; }
+.salarios span { 
+    font-size: 1.3em; 
+    font-weight: bold; 
+    display: block; 
+    margin-top: 5px; 
+    color: #333; 
+}
 
 /* --- Formulario (Flexbox) --- */
 .formulario { 
@@ -161,17 +193,20 @@ h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; mar
     font-weight: bold; 
     white-space: nowrap; 
     flex-shrink: 0; 
+    transition: background-color 0.3s ease;
 }
-.formulario button:hover { background-color: #218838; }
+.formulario button:hover { 
+    background-color: #218838; 
+}
 
 /* --- Tabla --- */
 .table-wrapper {
     overflow-x: auto; 
+    margin-top: 15px;
 }
 table { 
     width: 100%; 
     border-collapse: collapse; 
-    margin-top: 15px; 
 }
 th, td { 
     padding: 12px; 
@@ -179,11 +214,20 @@ th, td {
     text-align: left; 
     white-space: nowrap;
 }
-th { background-color: #007bff; color: white; }
-tr:nth-child(even) { background-color: #f2f2f2; }
+th { 
+    background-color: #007bff; 
+    color: white; 
+    font-weight: bold;
+}
+tr:nth-child(even) { 
+    background-color: #f2f2f2; 
+}
+tr:hover {
+    background-color: #e9ecef;
+}
 
 /* =========================================================== */
-/* NUEVO: ESTILOS PARA BOTONES DE ACCIONES EN TABLA - ARREGLADO */
+/* ESTILOS PARA BOTONES DE ACCIONES EN TABLA */
 /* =========================================================== */
 .acciones-botones {
     display: flex;
@@ -193,7 +237,7 @@ tr:nth-child(even) { background-color: #f2f2f2; }
 }
 
 .btn-eliminar {
-    background-color: #dc3545; /* Rojo */
+    background-color: #dc3545;
     color: white;
     border: none;
     padding: 6px 8px;
@@ -205,6 +249,7 @@ tr:nth-child(even) { background-color: #f2f2f2; }
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
 .btn-eliminar:hover {
@@ -212,7 +257,7 @@ tr:nth-child(even) { background-color: #f2f2f2; }
 }
 
 .btn-modificar {
-    background-color: #ffc107; /* Amarillo */
+    background-color: #ffc107;
     color: black;
     border: none;
     padding: 6px 8px;
@@ -224,6 +269,7 @@ tr:nth-child(even) { background-color: #f2f2f2; }
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
 .btn-modificar:hover {
@@ -232,22 +278,44 @@ tr:nth-child(even) { background-color: #f2f2f2; }
 
 /* Estilo para fila en modo edición */
 .fila-edicion {
-    background-color: #fff3cd !important; /* Fondo amarillo claro */
+    background-color: #fff3cd !important;
 }
 
 /* --- MEDIA QUERIES (ADAPTACIÓN A MÓVILES) --- */
 @media (max-width: 768px) {
-    .container { padding: 15px; margin: 0; }
-    h1 { font-size: 1.5em; text-align: center; }
+    .container { 
+        padding: 15px; 
+        margin: 0; 
+    }
+    h1 { 
+        font-size: 1.5em; 
+    }
 
-    .salarios { flex-direction: column; padding: 10px; }
-    .salarios div { min-width: 100%; margin: 5px 0; }
+    .salarios { 
+        flex-direction: column; 
+        padding: 10px; 
+    }
+    .salarios div { 
+        min-width: 100%; 
+        margin: 5px 0; 
+    }
     
-    /* Ajuste para los nuevos botones en móvil */
-    .acciones-datos { flex-direction: column; gap: 10px; padding: 15px; }
-    .acciones-datos button { max-width: 100%; }
+    /* Ajuste para botones de exportación en móvil */
+    .acciones-datos { 
+        flex-direction: column; 
+        gap: 10px; 
+        padding: 15px; 
+    }
+    .acciones-datos button { 
+        max-width: 100%; 
+        width: 100%;
+    }
 
-    .formulario { flex-direction: column; align-items: stretch; padding: 15px; }
+    .formulario { 
+        flex-direction: column; 
+        align-items: stretch; 
+        padding: 15px; 
+    }
     .formulario input, .formulario select, .formulario button {
         flex: 1 1 auto;
         width: 100%; 
@@ -262,9 +330,7 @@ tr:nth-child(even) { background-color: #f2f2f2; }
         flex-direction: column;
     }
 
-    /* =========================================================== */
-    /* NUEVO: AJUSTES ESPECÍFICOS PARA BOTONES EN MÓVIL - ARREGLADO */
-    /* =========================================================== */
+    /* Ajustes para botones de acciones en móvil */
     .acciones-botones {
         gap: 3px;
         flex-direction: column;
@@ -288,9 +354,9 @@ tr:nth-child(even) { background-color: #f2f2f2; }
         padding: 6px 4px;
     }
     
-    /* Ocultar algunas columnas menos importantes en móviles muy pequeños */
+    /* Ocultar columna Tipo en móviles muy pequeños */
     @media (max-width: 480px) {
-        th:nth-child(3), td:nth-child(3) { /* Columna Tipo */
+        th:nth-child(3), td:nth-child(3) {
             display: none;
         }
     }
@@ -305,5 +371,13 @@ tr:nth-child(even) { background-color: #f2f2f2; }
     .btn-eliminar, .btn-modificar {
         width: 100%;
         margin: 2px 0;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+    
+    .acciones-datos {
+        padding: 10px;
     }
 }

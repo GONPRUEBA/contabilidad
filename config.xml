@@ -1,21 +1,30 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.tudominio.contabilidad" version="1.0.0" xmlns="http://www.w3.org/ns/widgets">
-    <name>Contabilidad B</name>
-    <description>App de contabilidad personal</description>
-    <author email="arstv43@gmail.com">TXAPOTE</author>
-    
-    <content src="index.html" />
-    <access origin="*" />
-    
-    <!-- Solo estas preferencias básicas -->
-    <preference name="DisallowOverscroll" value="true" />
-    <preference name="android-minSdkVersion" value="22" />
-    
-    <!-- SOLO UN ICONO -->
-    <icon src="www/icon.png" />
-    
-    <!-- Solo plataforma Android -->
-    <platform name="android">
-        <icon src="www/icon.png" />
-    </platform>
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="com.tudominio.contabilidad" version="1.0.0">
+  <name>Contabilidad B</name>
+  <description>App de contabilidad personal</description>
+  <author email="arstv43@gmail.com">TXAPOTE</author>
+  <content src="index.html"/>
+  
+  <!-- Solo estas preferencias básicas -->
+  <preference name="android-minSdkVersion" value="22"/>
+  
+  <!-- SOLO UN ICONO -->
+  <icon src="www/icon.png"/>
+  
+  <!-- Solo plataforma Android -->
+  <platform name="android">
+    <icon src="www/icon.png"/>
+    <preference name="AndroidWindowSplashScreenBackground" value="#468fff"/>
+    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/screen/window_splashscreen_icon.png"/>
+  </platform>
+  
+  <preference name="WindowsStorePublisherName" value="My Name"/>
+  <preference name="WindowsStoreIdentityName" value="c996de1f-3602-23d7-3ff7-e37ee152ca51"/>
+  <access origin="*"/>
+  <preference name="KeepRunning" value="false"/>
+  <preference name="monaca:AndroidIsPackageNameSeparate" value="false"/>
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="Orientation" value="default"/>
+  <preference name="SplashScreenDelay" value="1"/>
+  <preference name="Fullscreen" value="false"/>
 </widget>
